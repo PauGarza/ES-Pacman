@@ -23,18 +23,15 @@ def selecciona_padres(poblacion, fitness, num_padres):
 
 # Función para generar una nueva población a partir de los padres seleccionados
 def genera_nueva_poblacion(padres, num_hijos, sigma):
-    nueva_poblacion = []
-    # Genera hijos para cada padre
-    for padre in padres:
-        # Genera num_hijos hijos para cada padre
-        for i in range(num_hijos):
-            hijo = deepcopy(padre)
-            # Modifica aleatoriamente el hijo utilizando una distribución normal con desviación estándar sigma
-            for j in range(len(hijo)):
-                hijo[j] += np.random.normal(0, sigma)
-            nueva_poblacion.append(hijo)
-    # Retorna la nueva población
-    return nueva_poblacion
+    hijos = []
+    for i in range(num_hijos):
+        padre = padres[i % len(padres)]
+        hijo = np.array(padre)
+        for j in range(len(hijo)):
+            hijo[j] += np.random.normal(0, sigma)
+        hijos.append(tuple(hijo))
+    return hijos
+
 
 # Función para ejecutar el algoritmo de evolución estratégica
 def run_es(num_generaciones=10, tam_poblacion=10, num_padres=2, num_hijos=2, sigma=0.1):
