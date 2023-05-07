@@ -4,10 +4,6 @@ from random import randrange
 import random
 import copy
 import os
-from es import run_es
-
-
-
 
 absolutePath = os.path.dirname(__file__)
 
@@ -125,7 +121,6 @@ class Game:
 
     # Driver method: The games primary update method
     def update(self):
-   
         # pygame.image.unload()
         print(self.ghostStates)
         if self.gameOver:
@@ -557,7 +552,6 @@ class Game:
         file.write(str(self.highScore))
         file.close()
 
-
 class Pacman:
     def __init__(self, row, col):
         self.row = row
@@ -566,28 +560,45 @@ class Pacman:
         self.pacSpeed = 1/4
         self.mouthChangeDelay = 5
         self.mouthChangeCount = 0
-        self.direccion_actual = None
-        self.direccion_pendiente = None
+        self.dir = 0 # 0: North, 1: East, 2: South, 3: West
+        self.newDir = 0
 
     def update(self):
-        if self.direccion_actual is None:
-            # Ejecutar el algoritmo genético para obtener la dirección inicial
-            self.direccion_actual = run_es()
-        if self.direccion_pendiente is None:
-            self.direccion_pendiente = self.direccion_actual.copy()
+        if self.newDir == 0:
+            if canMove(math.floor(self.row - self.pacSpeed), self.col) and self.col % 1.0 == 0:
+                self.row -= self.pacSpeed
+                self.dir = self.newDir
+                return
+        elif self.newDir == 1:
+            if canMove(self.row, math.ceil(self.col + self.pacSpeed)) and self.row % 1.0 == 0:
+                self.col += self.pacSpeed
+                self.dir = self.newDir
+                return
+        elif self.newDir == 2:
+            if canMove(math.ceil(self.row + self.pacSpeed), self.col) and self.col % 1.0 == 0:
+                self.row += self.pacSpeed
+                self.dir = self.newDir
+                return
+        elif self.newDir == 3:
+            if canMove(self.row, math.floor(self.col - self.pacSpeed)) and self.row % 1.0 == 0:
+                self.col -= self.pacSpeed
+                self.dir = self.newDir
+                return
 
-        # Obtener la siguiente posición a partir de la dirección actual
-        next_x, next_y = self.calcularSiguientePosicion(self.row, self.col, self.direccion_pendiente)
-        dx = next_x - self.row
-        dy = next_y - self.col
-        self.direccion_pendiente = (dx, dy)
+        if self.dir == 0:
+            if canMove(math.floor(self.row - self.pacSpeed), self.col) and self.col % 1.0 == 0:
+                self.row -= self.pacSpeed
+        elif self.dir == 1:
+            if canMove(self.row, math.ceil(self.col + self.pacSpeed)) and self.row % 1.0 == 0:
+                self.col += self.pacSpeed
+        elif self.dir == 2:
+            if canMove(math.ceil(self.row + self.pacSpeed), self.col) and self.col % 1.0 == 0:
+                self.row += self.pacSpeed
+        elif self.dir == 3:
+            if canMove(self.row, math.floor(self.col - self.pacSpeed)) and self.row % 1.0 == 0:
+                self.col -= self.pacSpeed
 
-        # Actualizar la dirección actual si Pacman ha avanzado
-        if (dx, dy) != (0, 0):
-            self.direccion_actual = self.direccion_pendiente
-
-        self.row, self.col = next_x, next_y
-
+    # Draws pacman based on his current state
     def draw(self):
         if not game.started:
             pacmanImage = pygame.image.load(ElementPath + "tile112.png")
@@ -600,22 +611,22 @@ class Pacman:
             self.mouthOpen = not self.mouthOpen
         self.mouthChangeCount += 1
         # pacmanImage = pygame.image.load("Sprites/tile049.png")
-        if self.direccion_actual == (0, -1):
+        if self.dir == 0:
             if self.mouthOpen:
                 pacmanImage = pygame.image.load(ElementPath + "tile049.png")
             else:
                 pacmanImage = pygame.image.load(ElementPath + "tile051.png")
-        elif self.direccion_actual == (1, 0):
+        elif self.dir == 1:
             if self.mouthOpen:
                 pacmanImage = pygame.image.load(ElementPath + "tile052.png")
             else:
                 pacmanImage = pygame.image.load(ElementPath + "tile054.png")
-        elif self.direccion_actual == (0, 1):
+        elif self.dir == 2:
             if self.mouthOpen:
                 pacmanImage = pygame.image.load(ElementPath + "tile053.png")
             else:
                 pacmanImage = pygame.image.load(ElementPath + "tile055.png")
-        elif self.direccion_actual == (-1, 0):
+        elif self.dir == 3:
             if self.mouthOpen:
                 pacmanImage = pygame.image.load(ElementPath + "tile048.png")
             else:
@@ -623,22 +634,6 @@ class Pacman:
 
         pacmanImage = pygame.transform.scale(pacmanImage, (int(square * spriteRatio), int(square * spriteRatio)))
         screen.blit(pacmanImage, (self.col * square + spriteOffset, self.row * square + spriteOffset, square, square))
-
-    def calcularSiguientePosicion(self, row, col, direccion):
-        dx, dy = direccion
-        next_row, next_col = row + dx * self.pacSpeed, col + dy * self.pacSpeed
-        if int(next_row) != int(row) or int(next_col) != int(col):
-            if dx < 0:
-                next_row = int(row)
-            elif dx > 0:
-                next_row = int(row) + 1
-            if dy < 0:
-                next_col = int(col)
-            elif dy > 0:
-                next_col = int(col) + 1
-        return next_row, next_col
-
-
 
 class Ghost:
     def __init__(self, row, col, color, changeFeetCount):
