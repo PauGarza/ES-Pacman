@@ -1,56 +1,54 @@
 import numpy as np
+from copy import deepcopy
+import math
 
-def run_es():
-    # Parámetros del algoritmo genético
-    num_generaciones = 10  # O cualquier otro número entero que desees
-    tamano_poblacion = ...
-    num_padres = ...
-    sigma = ...
-    epsilon = ...
-    
-    # Inicialización de la población aleatoria
-    poblacion = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # O cualquier otra lista de direcciones que desees
-    
-    # Ciclo principal del algoritmo genético
-    for i in range(int(num_generaciones)):
-        # Evaluación de la población actual
-        fitness = evalua_poblacion(poblacion)
-        
-        # Selección de los mejores padres
-        padres = selecciona_padres(poblacion, fitness, num_padres)
-        
-        # Mutación y generación de la nueva población
-        nueva_poblacion = []
-        for j in range(tamano_poblacion):
-            padre = ...
-            hijo = muta(padre, sigma)
-            nueva_poblacion.append(hijo)
-        poblacion = nueva_poblacion
-        
-    # Obtención del mejor vector de dirección
-    mejor_indice = np.argmax(fitness)
-    mejor_direccion = poblacion[mejor_indice]
-    
-    return mejor_direccion
+# Función para evaluar un individuo
+def evalua_individuo(individuo):
+    # Simula el juego para calcular el puntaje
+    # Retorna el puntaje
+    return 0  # Reemplazar con el cálculo del puntaje
 
+# Función para evaluar una población
 def evalua_poblacion(poblacion):
-    # Función que evalúa la población actual
-    fitness = []
-    for direccion in poblacion:
-        # Ejecutar múltiples juegos con la dirección actual
-        # y obtener el puntaje total de Pacman en cada juego
-        score_promedio = ...
-        fitness.append(score_promedio)
-    return fitness
+    return [evalua_individuo(individuo) for individuo in poblacion]
 
+# Función para seleccionar los padres de la próxima generación
 def selecciona_padres(poblacion, fitness, num_padres):
-    # Función que selecciona los mejores padres
+    # Ordena los individuos por puntaje
     indices_ordenados = np.argsort(fitness)[::-1]
-    mejores_indices = indices_ordenados[:num_padres]
-    padres = [poblacion[i] for i in mejores_indices]
-    return padres
+    # Selecciona los padres
+    padres_indices = indices_ordenados[:num_padres]
+    # Retorna los padres seleccionados
+    return [poblacion[i] for i in padres_indices]
 
-def muta(padre, sigma):
-    # Función que genera un hijo mutado a partir de un padre
-    hijo = padre + sigma * np.random.randn(len(padre))
-    return hijo
+# Función para generar una nueva población a partir de los padres seleccionados
+def genera_nueva_poblacion(padres, num_hijos, sigma):
+    nueva_poblacion = []
+    # Genera hijos para cada padre
+    for padre in padres:
+        # Genera num_hijos hijos para cada padre
+        for i in range(num_hijos):
+            hijo = deepcopy(padre)
+            # Modifica aleatoriamente el hijo utilizando una distribución normal con desviación estándar sigma
+            for j in range(len(hijo)):
+                hijo[j] += np.random.normal(0, sigma)
+            nueva_poblacion.append(hijo)
+    # Retorna la nueva población
+    return nueva_poblacion
+
+# Función para ejecutar el algoritmo de evolución estratégica
+def run_es(num_generaciones=10, tam_poblacion=10, num_padres=2, num_hijos=2, sigma=0.1):
+    # Define la población inicial
+    poblacion = [(-1, 0), (1, 0), (0, -1), (0, 1)] * tam_poblacion
+    # Ejecuta el algoritmo durante num_generaciones
+    for i in range(num_generaciones):
+        # Evalúa la población actual
+        fitness = evalua_poblacion(poblacion)
+        # Selecciona los padres para la próxima generación
+        padres = selecciona_padres(poblacion, fitness, num_padres)
+        # Genera la nueva población a partir de los padres seleccionados
+        poblacion = genera_nueva_poblacion(padres, num_hijos, sigma)
+    # Retorna el mejor individuo encontrado
+    fitness = evalua_poblacion(poblacion)
+    best_index = np.argmax(fitness)
+    return poblacion[best_index]
