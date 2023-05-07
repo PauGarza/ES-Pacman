@@ -9,7 +9,7 @@ def run_es():
     epsilon = ...
     
     # Inicialización de la población aleatoria
-    poblacion = ...
+    poblacion = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # O cualquier otra lista de direcciones que desees
     
     # Ciclo principal del algoritmo genético
     for i in range(int(num_generaciones)):
