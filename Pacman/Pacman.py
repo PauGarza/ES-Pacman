@@ -8,6 +8,7 @@ from es import run_es
 
 
 
+
 absolutePath = os.path.dirname(__file__)
 
 BoardPath = os.path.join(absolutePath, "Assets/BoardImages/")
