@@ -1,7 +1,5 @@
 import random
 import math
-from Pacman import Pacman
-from Pacman import Ghost
 
 
 POPULATION_SIZE = 10
@@ -18,8 +16,8 @@ def create_population():
 
 
 def evaluate_fitness(individual, layout, pacman_pos, ghosts_pos):
-    pacman = Pacman(pacman_pos[0], pacman_pos[1])
-    ghosts = [Ghost(*pos) for pos in ghosts_pos]
+    pacman = pacman_pos
+    ghosts = ghosts_pos
     score = 0
     num_moves = 0
 
