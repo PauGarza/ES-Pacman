@@ -124,6 +124,7 @@ class Game:
 
     # Driver method: The games primary update method
     def update(self):
+   
         # pygame.image.unload()
         print(self.ghostStates)
         if self.gameOver:
