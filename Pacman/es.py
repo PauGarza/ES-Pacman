@@ -2,7 +2,7 @@ import numpy as np
 
 def run_es():
     # Parámetros del algoritmo genético
-    num_generaciones = ...
+    num_generaciones = 10  # O cualquier otro número entero que desees
     tamano_poblacion = ...
     num_padres = ...
     sigma = ...
@@ -12,7 +12,7 @@ def run_es():
     poblacion = ...
     
     # Ciclo principal del algoritmo genético
-    for i in range(num_generaciones):
+    for i in range(int(num_generaciones)):
         # Evaluación de la población actual
         fitness = evalua_poblacion(poblacion)
         
