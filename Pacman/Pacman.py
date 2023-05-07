@@ -1,10 +1,9 @@
-import pygame
+# import pygame
 import math
 from random import randrange
 import random
 import copy
 import os
-from es_pacman import get_next_move
 
 absolutePath = os.path.dirname(__file__)
 
@@ -564,14 +563,7 @@ class Pacman:
         self.dir = 0 # 0: North, 1: East, 2: South, 3: West
         self.newDir = 0
 
-    def update(self, layout):
-        self.mouthChangeCount += 1
-        if self.mouthChangeCount >= self.mouthChangeDelay:
-            self.mouthOpen = not self.mouthOpen
-            self.mouthChangeCount = 0
-
-        self.newDir = get_next_move(layout, (self.row, self.col), [(ghost.row, ghost.col) for ghost in layout.ghosts])  # Llama a la función get_next_move para obtener el siguiente movimiento
-
+    def update(self):
         if self.newDir == 0:
             if canMove(math.floor(self.row - self.pacSpeed), self.col) and self.col % 1.0 == 0:
                 self.row -= self.pacSpeed
@@ -592,6 +584,19 @@ class Pacman:
                 self.col -= self.pacSpeed
                 self.dir = self.newDir
                 return
+
+        if self.dir == 0:
+            if canMove(math.floor(self.row - self.pacSpeed), self.col) and self.col % 1.0 == 0:
+                self.row -= self.pacSpeed
+        elif self.dir == 1:
+            if canMove(self.row, math.ceil(self.col + self.pacSpeed)) and self.row % 1.0 == 0:
+                self.col += self.pacSpeed
+        elif self.dir == 2:
+            if canMove(math.ceil(self.row + self.pacSpeed), self.col) and self.col % 1.0 == 0:
+                self.row += self.pacSpeed
+        elif self.dir == 3:
+            if canMove(self.row, math.floor(self.col - self.pacSpeed)) and self.row % 1.0 == 0:
+                self.col -= self.pacSpeed
 
     # Draws pacman based on his current state
     def draw(self):
