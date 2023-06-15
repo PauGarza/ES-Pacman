@@ -74,6 +74,7 @@ PLAYING_KEYS = {
     "left":[pygame.K_a, pygame.K_LEFT]
 }
 
+
 class Game:
     def __init__(self, level, score):
         self.paused = True
